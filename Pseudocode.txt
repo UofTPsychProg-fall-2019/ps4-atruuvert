@@ -1,0 +1,98 @@
+PSY1210Y Assignment 1 Pseudocode
+
+DESCRIPTION OF EXPERIMENT
+
+My experiment will attempt to replicate the manual gap effect. The gap effect describes a faster reaction time to a target stimulus from central fixation when the central fixation disappears before target onset. The greater the overlap between the target onset and the central fixation offset, the more the gap effect is reduced. This study will run 10 participants through a basic gap effect replication using pointed hand movements on a touch screen. I will manipulate the overlap time between central fixation offset and target onset, such that there are 6 different gap conditions (overlap, 100ms, 150ms, 200ms, 250ms, 300ms). The target can appear on either the left or right of fixation. Each condition will have 40 trials. 500ms after the participant’s finger is in the ‘home’ position below central fixation, a 50ms auditory signal will alert the participant which side the target will be on (so we remove the effects of a warning signal that the central fixation offset may provide). If there is a gap, the central fixation offset and warning signal will be at the same time. In the overlap condition, the target appears 200ms after the warning signal. 
+
+6 conditions x 2 target sides x 40 trials = 480 total trials.
++ 30 practice trials to start = 510 total trials.
+
+My hypothesis, based on the literature, is that we observe the greatest gap effect at 200ms.
+
+PSEUDOCODE
+
+will need to import a timer with ms
+
+collect subject information
+- subject number
+- age
+- gender
+- handedness
+
+save subject information into labelled columns in a new .csv file and name it the subject number
+
+instructions appear:
+“Welcome to the experiment. 
+In this experiment, you will be using the pointer finger on your dominant hand to move as quickly and accurately as possible to a target that appears on the left or right side of the screen.
+On every trial, a central fixation box will appear, with a ‘home’ box below it. Keeping your eyes on the central fixation box, place your finger on the home box, and the trial will begin. 
+You will hear a sound indicating if the target will appear on the left or the right of fixation. Then, the target will appear.
+Your task is to touch the target as quickly and accurately as possible with your finger, keeping your eyes at central fixation.
+Press space to begin practice.”
+
+conditions = [0, 100, 150, 200, 250, 300]
+sides = [‘L’,’R’]
+load in auditory signal and set it to be 50ms long
+
+# PRACTICE TRIALS
+
+if space bar is pressed:
+
+	appearance of central fixation box and home box for finger placement below it
+	trial = 0
+
+	while trial <= 30:
+		call trial function
+		trial += 1
+
+instructions appear:
+“You are done the practice trials. Press space to begin the experiment.”
+
+# EXPERIMENT BEGINS
+
+if space bar is pressed:
+
+	appearance of central fixation box and home box for finger placement below it
+
+	while trial <= 510:
+		call trial function	
+		trial += 1
+
+def trial function:
+	cond = get random condition from conditions (must be so that every condition is called equally)
+	target_side = get random side from sides (must be so that each target side is called equally)
+	call to the mouse, get (x,y) coordinates and compare to the home position
+	if (x,y) == the coordinates of the home box below central fixation:
+		after 500ms:
+			if target_side == ‘L’:
+				play auditory signal on the left
+			elif target_side == ‘R’:
+				play auditory signal on the right
+			if cond == 0: # Overlap
+				after 200 ms: 
+					call target_appears function
+			else:  # Gap
+				central fixation offsets immediately
+				after a delay of cond ms:
+					call target_appears function
+		
+	def target_appears function:
+		start timer
+		if target_side == ‘L’:
+			target appears on left
+		elif target_side == ‘R’:
+			target appears on right
+		call to the mouse, get (x,y) coordinates and compare to the home position
+		when finger leaves the screen:  # Disengagement
+			RT = current time on timer  # Reaction time
+		if (x,y) == outside the coordinates of the home position:  # Attempt to touch target
+			MT = current time on timer - RT  # Movement time
+			landing_position = current mouse coordinates
+			if landing_position == coordinates of the target:
+				accuracy = 1
+			else:
+				accuracy = 0
+		
+
+	save trial, cond, target_side, RT, MT, landing_position, accuracy to labelled columns in subject’s .csv file
+
+exit the program
